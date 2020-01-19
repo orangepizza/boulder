@@ -1,6 +1,10 @@
 // The identifier package defines types for RFC 8555 ACME identifiers.
 package identifier
 
+import (
+	"net"
+)
+
 // IdentifierType is a named string type for registered ACME identifier types.
 // See https://tools.ietf.org/html/rfc8555#section-9.7.7
 type IdentifierType string
@@ -8,6 +12,8 @@ type IdentifierType string
 const (
 	// DNS is specified in RFC 8555 for DNS type identifiers.
 	DNS = IdentifierType("dns")
+	// defined IP Identifiers as in draft-ietf-acme-ip-08:
+	IP = IdentifierType("ip")
 )
 
 // ACMEIdentifier is a struct encoding an identifier that can be validated. The
@@ -28,5 +34,21 @@ func DNSIdentifier(domain string) ACMEIdentifier {
 	return ACMEIdentifier{
 		Type:  DNS,
 		Value: domain,
+	}
+}
+
+//a temp function that create ACMEIdentifier from names in string format.
+// ultimately funtions should pass/receive full ACMEidentifiers except in tests
+func RestoreIdentfier(name string) ACMEIdentifier {
+	if net.ParseIP(name) != nil {
+		return ACMEIdentifier{
+			Type:  IP,
+			Value: name,
+		}
+	} else {
+		return ACMEIdentifier{
+			Type:  IP,
+			Value: name,
+		}
 	}
 }
